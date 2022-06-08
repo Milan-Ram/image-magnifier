@@ -99,7 +99,7 @@ function myFunction(x) {
             var $viewer = $("<div />").addClass("viewer-box").width(vWidth/1.2).height(vHeight/1.2);
              $zoomBox = target.closest(".zoom-box");
             $viewer.css({
-                left:  -3*SPACING,
+                left:  -3.3*SPACING,
                 top:20*SPACING
             })
             _setOriginalSize(target, function(oWidth, oHeight){
