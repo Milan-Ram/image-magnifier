@@ -10,7 +10,7 @@
  * 2017.5.30    修改通过请求获取的图片获取不到高宽的问题   v.1.1.0
  *
  */
-(function($){
+ (function($){
 
     var SPACING = 15;
     //var ZOOM_TIMES = 10;
@@ -87,32 +87,78 @@
      * @param vHeight     放大区域长度
      * @private
      */
-    var _initViewer = function(target, imgUrl, vWidth, vHeight){
-        var $viewer = $("<div />").addClass("viewer-box").width(vWidth).height(vHeight);
-        var $zoomBox = target.closest(".zoom-box");
-        $viewer.css({
-            left: target.width() + SPACING,
-            top: 0
-        })
-        _setOriginalSize(target, function(oWidth, oHeight){
-            var $img = $("<img src='"+imgUrl+"' />").width(oWidth).height(oHeight);
-            $viewer.append($img);
-            target.after($viewer);
-        });
+    
+
+//  Responsiveness
+var _initViewer;
+var $zoomBox;
+
+function myFunction(x) {
+    if (x.matches) { // If media query matches
+         _initViewer = function(target, imgUrl, vWidth, vHeight){
+            var $viewer = $("<div />").addClass("viewer-box").width(vWidth/1.2).height(vHeight/1.2);
+             $zoomBox = target.closest(".zoom-box");
+            $viewer.css({
+                left:  -3*SPACING,
+                top:20*SPACING
+            })
+            _setOriginalSize(target, function(oWidth, oHeight){
+                var $img = $("<img src='"+imgUrl+"' />").width(oWidth).height(oHeight);
+                $viewer.append($img);
+                target.after($viewer);
+            });
+        }
+        /**
+         * 设置图片原始宽高
+         * @param target       图片jquery对象
+         * @param callback     通过回调函数设置原始宽高
+         * @returns {{oWidth: Number, oHeight: Number}}
+         * @private
+         */
+        var _setOriginalSize = function(target, callback){
+            var newImg = new Image();
+            newImg.src = target.attr("src")+"?date="+new Date();
+            $(newImg).on("load", function(){
+                callback(newImg.width, newImg.height);
+            })
+        }
     }
-    /**
-     * 设置图片原始宽高
-     * @param target       图片jquery对象
-     * @param callback     通过回调函数设置原始宽高
-     * @returns {{oWidth: Number, oHeight: Number}}
-     * @private
-     */
-    var _setOriginalSize = function(target, callback){
-        var newImg = new Image();
-        newImg.src = target.attr("src")+"?date="+new Date();
-        $(newImg).on("load", function(){
-            callback(newImg.width, newImg.height);
-        })
+     else {
+         _initViewer = function(target, imgUrl, vWidth, vHeight){
+            var $viewer = $("<div />").addClass("viewer-box").width(vWidth).height(vHeight);
+             $zoomBox = target.closest(".zoom-box");
+            $viewer.css({
+                left: target.width() + SPACING,
+                top: 0
+            })
+            _setOriginalSize(target, function(oWidth, oHeight){
+                var $img = $("<img src='"+imgUrl+"' />").width(oWidth).height(oHeight);
+                $viewer.append($img);
+                target.after($viewer);
+            });
+        }
+        /**
+         * 设置图片原始宽高
+         * @param target       图片jquery对象
+         * @param callback     通过回调函数设置原始宽高
+         * @returns {{oWidth: Number, oHeight: Number}}
+         * @private
+         */
+        var _setOriginalSize = function(target, callback){
+            var newImg = new Image();
+            newImg.src = target.attr("src")+"?date="+new Date();
+            $(newImg).on("load", function(){
+                callback(newImg.width, newImg.height);
+            })
+        }
     }
+  }
+  
+  var x = window.matchMedia("(max-width: 1200px)");
+  myFunction(x); // Call listener function at run time
+  x.addEventListener(myFunction);
+
+
+
 
 })(jQuery);
